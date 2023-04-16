@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 import time
+from gingerit.gingerit import GingerIt
+
+parser = GingerIt()
 
 root = tk.Tk()
 root.title("Chat App")
@@ -30,16 +33,63 @@ input_frame = tk.Frame(root, bg="#252525", height=70)
 input_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=20, pady=20)
 
 # create an entry widget for typing the chat message
-input_entry = tk.Entry(input_frame, bg="#141414", fg="white", font=("Poppins", 14))
+input_entry = tk.Entry(input_frame, bg="#141414", fg="white", font=("Poppins", 14), borderwidth=0)
 input_entry.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
+
+# create a frame for the settings menu
+settings_frame = tk.Frame(root, bg="#252525")
+settings_frame.pack(side=tk.TOP, fill=tk.X, padx=20, pady=10)
+
+# create a label for the autocorrect setting
+autocorrect_label = tk.Label(settings_frame, text="Autocorrect", bg="#252525", fg="white", font=("Poppins", 14))
+autocorrect_label.pack(side=tk.LEFT, padx=10)
+
+# create a canvas for the autocorrect setting
+autocorrect_canvas = tk.Canvas(settings_frame, width=30, height=30, bg="red", highlightthickness=0)
+autocorrect_canvas.pack(side=tk.LEFT)
+
+# create an X text for the red square
+autocorrect_canvas.create_text(15, 15, text="X", font=("Poppins", 14), fill="white")
+
+# bind click event to toggle autocorrect setting
+autocorrect_canvas.bind("<Button-1>", lambda event: toggle_autocorrect())
+
+# define a function to toggle the autocorrect setting
+def toggle_autocorrect():
+    global autocorrect
+    autocorrect = not autocorrect
+    if autocorrect:
+        autocorrect_canvas.configure(bg="green")
+        autocorrect_canvas.delete("all")
+        autocorrect_canvas.create_text(15, 15, text="✔", font=("Poppins", 14), fill="white")
+    else:
+        autocorrect_canvas.configure(bg="red")
+        autocorrect_canvas.delete("all")
+        autocorrect_canvas.create_text(15, 15, text="X", font=("Poppins", 14), fill="white")
+
+
 # create a button to send the chat message
-send_button = tk.Button(input_frame, text="Send", bg="#5E5CE6", fg="white", font=("Poppins", 14), highlightthickness=0)
+send_button = tk.Button(input_frame, text="Send", bg="#5E5CE6", fg="white", font=("Poppins", 14), highlightthickness=0,
+                         borderwidth=3)
 send_button.pack(side=tk.RIGHT, padx=10, pady=10)
 
+
+autocorrect = False
+
 def send_message(event=None):
+
     message = input_entry.get()
+
     if message:
+
+        if autocorrect:
+            message = parser.parse(message)['result']
+
+        else:
+            pass
+
+        message = " " + str(message) + " "
         # create a frame for the chat message
         message_frame = tk.Frame(history_items, bg="#141414", padx=10, pady=5)
 
@@ -47,7 +97,7 @@ def send_message(event=None):
         message_text = tk.Label(
             message_frame, text=message, bg="#5E5CE6", fg="white", font=("Poppins", 14),
             wraplength=400, justify=tk.LEFT, padx=10, pady=10,
-            borderwidth=2, relief=tk.RAISED,
+            borderwidth=0, relief=tk.RAISED,
         )
         message_text.pack(side=tk.RIGHT, fill=tk.Y)
 
