@@ -1,64 +1,93 @@
 import tkinter as tk
 from tkinter import ttk
+import time
 
 root = tk.Tk()
 root.title("Chat App")
-root.geometry("500x600")
-root.resizable(False, False)
+root.geometry("800x600")
+root.configure(bg='#252525')
+root.resizable(width=False, height=False)
 
-history_frame = tk.Frame(root, bg="white", bd=5)
-history_frame.place(relx=0.5, rely=0.1, relwidth=0.9, relheight=0.6, anchor="n")
+# create a frame for displaying the chat history
+history_frame = tk.Frame(root, bg="#141414")
+history_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-scrollbar = ttk.Scrollbar(history_frame)
-scrollbar.pack(side="right", fill="y")
+# create a scrollbar for the history frame
+scrollbar = tk.Scrollbar(history_frame)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-history_canvas = tk.Canvas(history_frame, bg="white", bd=0, highlightthickness=0, yscrollcommand=scrollbar.set)
-history_canvas.pack(side="left", fill="both", expand=True)
+# create a canvas to display the chat history
+history_canvas = tk.Canvas(history_frame, bg="#141414", yscrollcommand=scrollbar.set, highlightthickness=0)
+history_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 scrollbar.config(command=history_canvas.yview)
 
-def on_configure(event):
-    history_canvas.configure(scrollregion=history_canvas.bbox("all"))
+# create a frame for the chat history items
+history_items = tk.Frame(history_canvas, bg="#141414")
+history_canvas.create_window((0, 0), window=history_items, anchor=tk.NW)
 
-history_canvas.bind("<Configure>", on_configure)
+# create a frame for entering the chat message
+input_frame = tk.Frame(root, bg="#252525", height=70)
+input_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=20, pady=20)
 
-messages_frame = tk.Frame(history_canvas, bg="white", bd=0)
-history_canvas.create_window((0, 0), window=messages_frame, anchor="nw")
+# create an entry widget for typing the chat message
+input_entry = tk.Entry(input_frame, bg="#141414", fg="white", font=("Poppins", 14))
+input_entry.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-def send_message(text, direction):
-    if direction == "left":
-        color = "lightgreen"
-        anchor = "w"
-    else:
-        color = "lightblue"
-        anchor = "e"
-    message_widget = tk.Label(messages_frame, bg=color, fg="black", text=text, font=("Helvetica", 12), wraplength=300, padx=10, pady=5, borderwidth=2, relief="groove")
-    message_widget.pack(side="top", fill="x", padx=5, pady=5, anchor=anchor)
-    messages_frame.update_idletasks()
-    history_canvas.configure(scrollregion=history_canvas.bbox("all"))
-    # AI response
-    if direction == "right":
-        if text.lower() == "hello":
-            response = "Hello, how can I assist you?"
-        else:
-            response = "I'm sorry, I don't know the answer to that."
-        ai_message_widget = tk.Label(messages_frame, bg="lightgreen", fg="black", text=response, font=("Helvetica", 12), wraplength=300, padx=10, pady=5, borderwidth=2, relief="groove")
-        ai_message_widget.pack(side="top", fill="x", padx=5, pady=5, anchor="w")
-        messages_frame.update_idletasks()
-        history_canvas.configure(scrollregion=history_canvas.bbox("all"))
+# create a button to send the chat message
+send_button = tk.Button(input_frame, text="Send", bg="#5E5CE6", fg="white", font=("Poppins", 14), highlightthickness=0)
+send_button.pack(side=tk.RIGHT, padx=10, pady=10)
 
-def send_message_wrapper():
-    text = entry.get()
-    if text != "":
-        entry.delete(0, "end")
-        send_message(text, "right")
+def send_message(event=None):
+    message = input_entry.get()
+    if message:
+        # create a frame for the chat message
+        message_frame = tk.Frame(history_items, bg="#141414", padx=10, pady=5)
 
-entry_frame = tk.Frame(root, bg="white", bd=5)
-entry_frame.place(relx=0.5, rely=0.8, relwidth=0.9, relheight=0.1, anchor="n")
+        # create a label to display the chat message text
+        message_text = tk.Label(
+            message_frame, text=message, bg="#5E5CE6", fg="white", font=("Poppins", 14),
+            wraplength=400, justify=tk.LEFT, padx=10, pady=10,
+            borderwidth=2, relief=tk.RAISED,
+        )
+        message_text.pack(side=tk.RIGHT, fill=tk.Y)
 
-entry = tk.Entry(entry_frame, font=("Helvetica", 12))
-entry.pack(side="left", fill="both", expand=True, padx=5, pady=5)
+        # create a label to display the time the message was sent
+        timestamp = time.strftime("%H:%M", time.localtime())
+        time_label = tk.Label(
+            message_frame, text=timestamp, bg="#141414", fg="gray", font=("Poppins", 10),
+            padx=5, pady=5,
+        )
+        time_label.pack(side=tk.RIGHT)
 
-send_button = tk.Button(entry_frame, text="Send", font=("Helvetica", 12), command=send_message_wrapper)
-send_button.pack(side="right", padx=5, pady=5)
+        # add the chat message frame to the chat history items
+        message_frame.update()
+        message_frame_width = message_frame.winfo_width()
+        history_items.config(width=message_frame_width)
+        history_canvas.config(scrollregion=history_canvas.bbox(tk.ALL))
+        history_items.pack(fill=tk.BOTH, expand=True)
+        message_frame.pack(fill=tk.X)
+
+        # clear the input entry
+        input_entry.delete(0, tk.END)
+
+        # scroll to the bottom of the chat history
+        history_canvas.yview_moveto(1)
+
+        # clear the input entry
+        input_entry.delete(0, tk.END)
+
+        # scroll to the bottom of the chat history
+        history_canvas.yview_moveto(1)
+
+# bind the send button and the Enter key to the send_message function
+send_button.bind("<Button-1>", send_message)
+input_entry.bind("<Return>", send_message)
+
+# bind the mousewheel to the history canvas for scrolling
+def mouse_wheel(event):
+    history_canvas.yview_scroll(-1 * int(event.delta / 120), "units")
+
+history_canvas.bind_all("<MouseWheel>", mouse_wheel)
 
 root.mainloop()
+
