@@ -7,8 +7,8 @@ from time import time
 # print(req.json())
 
 # POST request test
-# req = requests.post('http://localhost:5000/', json={'key':'value'})
-# print(req.json())
+req = requests.post('http://localhost:5000/login', json={'name':'thbop', 'password':'Beef64'})
+print(req.json())
 
 
 # req_concept = {

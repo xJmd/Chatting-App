@@ -1,14 +1,18 @@
-from server.scripts import *
+from server import *
 from flask import request
 
-class App(BaseApp):
+class App(BaseApp, User):
     def __init__(self):
         super().__init__(__name__)
+
+        self.handler.user.add('Thbop', 'Beef64')
     
     def pages(self):
         @self.app.route('/ping')
         def ping():
             return '1'
+        
+        self.login()
         
         # @self.app.route('/', methods=['GET', 'POST'])
         # def helloworld():

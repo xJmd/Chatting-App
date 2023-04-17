@@ -1,18 +1,14 @@
 import secrets
-from .db import Database
 
-class Handler:
-    def __init__(self):
-        '''Initializes the Handler and the Database.'''
+class User:
+    def __init__(self, db):
         self.default_user = {
             'key':None,
             'name':None,
             'password':None,
-            'permission-level':0,
-            'history':[]
+            'permission-level':0
         }
-        self.db = Database('db.json')
-    
+        self.db = db
 
     def get(self, key):
         '''Get's a user's data using their key.'''
@@ -55,6 +51,20 @@ class Handler:
         self.db.data['users'].append(user)
         self.db.save()
     
+    def edit(self, key, k, v):
+        '''Edits a user via the specified key and key/value pair'''
+        user_i = None
+        for i, user in enumerate(self.db.data['users'], 0):
+            if key == user['key']:
+                user_i = i
+        if user_i == None:
+            return False
+        else:
+            self.db.data['users'][user_i][k] = v
+            self.db.save()
+            return True
+
+    
     def migrate(self):
         '''
         Migrates the user database to the current user version.
@@ -94,4 +104,3 @@ class Handler:
             return self.get_name(name)
         else:
             return False
-        
