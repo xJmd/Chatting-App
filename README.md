@@ -2,6 +2,8 @@
 
 This Chatting App is a nice little open-source flask application with some gui applets.
 
+[NOTE]: This project is currently in an earily stage. This means that it doesn't work properly or at all.
+
 ## Codebase structure:
 Its structure is quite odd yet simple to understand.
 ### Server:
