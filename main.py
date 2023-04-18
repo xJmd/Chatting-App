@@ -1,11 +1,10 @@
 from server import *
-from flask import request
 
-class App(BaseApp, User):
+class App(BaseApp, User, Chat):
     def __init__(self):
         super().__init__(__name__)
 
-        self.handler.user.add('Thbop', 'Beef64')
+
     
     def pages(self):
         @self.app.route('/ping')
@@ -14,6 +13,8 @@ class App(BaseApp, User):
         
         self.login()
         self.signup()
+
+        self.chat()
         
         # @self.app.route('/', methods=['GET', 'POST'])
         # def helloworld():

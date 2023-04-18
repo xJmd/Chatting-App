@@ -77,8 +77,19 @@ class Client:
             self.data['key'] = res['key']
             self.save_data()
         return res
+
+    def send_message(self, chat_id, message):
+        data = {
+            'key': self.data['key'], 
+            'action': 'send-message',
+            'data': {'message': message}
+        }
+        res = self.send_req_raw('/chat/' + chat_id, data)
+        return res
         
 
 if __name__ == '__main__':
     client = Client()
-    print(client.login('Thbop', 'Beef64'))
+    # client.login('Thbop', 'Beef64')
+    chat_id = '098029348590'
+    print(client.send_message(chat_id, 'Hello world!'))

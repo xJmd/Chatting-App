@@ -1,1 +1,20 @@
-{"users": [{"key": "abc5347310bc9df99f55d3a98b40c28b9ddb650791da6cedfa851ef1b89b8348", "name": "Thbop", "password": "Beef64", "permission-level": 0}], "chats": [{"title": "Test Chat", "members": ["thbop"], "messages": [{"user": "thbop", "content": "Test message", "timestamp": "4/17/2023 - 20:01"}]}]}
+{
+    "users": [
+        {
+            "key": "005d8dac3da1e157fb75c3030772827539b7efa05ea087669c84bf7603bb6590",
+            "name": "Thbop",
+            "password": "Beef64",
+            "permission-level": 0
+        }
+    ],
+    "chats": [
+        {
+            "title": "Test Chat",
+            "id": "098029348590",
+            "members": [
+                "thbop"
+            ],
+            "messages": []
+        }
+    ]
+}
