@@ -2,6 +2,7 @@ import secrets
 
 class User:
     def __init__(self, db):
+        # Maybe add a friends system
         self.default_user = {
             'key':None,
             'name':None,
