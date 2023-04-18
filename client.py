@@ -7,8 +7,8 @@ from time import time
 # print(req.json())
 
 # POST request test
-req = requests.post('http://localhost:5000/login', json={'name':'thbop', 'password':'Beef64'})
-print(req.json())
+# req = requests.post('http://localhost:5000/signup', json={'name':'thbop', 'password':'Beef64'})
+# print(req.json())
 
 
 # req_concept = {
@@ -28,7 +28,8 @@ class Client:
     def load_data(self):
         base_data = {
             'url':'http://localhost:5000',
-            'key': None
+            'key': None,
+            'cache': {}
         }
         try:
             file = open('client-data.json')
@@ -53,5 +54,31 @@ class Client:
         req = requests.get(self.data['url'] + '/ping')
         return req.json()
 
+    def send_req_raw(self, eurl, data):
+        '''
+        POSTs any json to the extended url
+        (http://baseurl.com/extended/url)
+        '''
+        req = requests.post(self.data['url'] + eurl , json=data)
+        return req.json()
+    
+    def login(self, name, password):
+        data = {'name': name, 'password': password}
+        res = self.send_req_raw('/login', data=data)
+        if res['error'] == None:
+            self.data['key'] = res['key']
+            self.save_data()
+        return res
+
+    def signup(self, name, password):
+        data = {'name': name, 'password': password}
+        res = self.send_req_raw('/signup', data=data)
+        if res['error'] == None:
+            self.data['key'] = res['key']
+            self.save_data()
+        return res
+        
+
 if __name__ == '__main__':
     client = Client()
+    print(client.login('Thbop', 'Beef64'))

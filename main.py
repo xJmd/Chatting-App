@@ -13,6 +13,7 @@ class App(BaseApp, User):
             return '1'
         
         self.login()
+        self.signup()
         
         # @self.app.route('/', methods=['GET', 'POST'])
         # def helloworld():
